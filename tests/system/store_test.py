@@ -17,7 +17,7 @@ class StoreTest(BaseTest):
                 r = c.get('/store/test')
 
                 self.assertEqual(r.status_code, 200)
-                self.assertDictEqual(d1={'name': 'test', 'items': []},
+                self.assertDictEqual(d1={'id': 1, 'name': 'test', 'items': []},
                                      d2=json.loads(r.data))
 
     def test_store_with_items_found(self):
@@ -28,7 +28,7 @@ class StoreTest(BaseTest):
                 r = c.get('/store/test')
 
                 self.assertEqual(r.status_code, 200)
-                self.assertDictEqual(d1={'name': 'test', 'items': [{'name': 'test', 'price': 2.99}]},
+                self.assertDictEqual(d1={'id': 1, 'name': 'test', 'items': [{'name': 'test', 'price': 2.99}]},
                                      d2=json.loads(r.data))
 
     def test_delete_store(self):
@@ -48,7 +48,7 @@ class StoreTest(BaseTest):
 
                 self.assertEqual(r.status_code, 201)
                 self.assertIsNotNone(StoreModel.find_by_name('test'))
-                self.assertDictEqual(d1={'name': 'test', 'items': []},
+                self.assertDictEqual(d1={'id': 1, 'name': 'test', 'items': []},
                                      d2=json.loads(r.data))
 
     def test_create_duplicate_store(self):
