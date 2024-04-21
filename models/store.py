@@ -11,7 +11,7 @@ class StoreModel(db.Model):
 
     def __init__(self, name):
         self.name = name
-
+        self.id = StoreModel.id
     def json(self):
         return {'id': self.id, 'name': self.name, 'items': [item.json() for item in self.items.all()]}
 
