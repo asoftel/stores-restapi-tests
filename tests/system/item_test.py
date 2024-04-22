@@ -3,7 +3,6 @@ from models.item import ItemModel
 from models.store import StoreModel
 from tests.test_base import BaseTest
 import json
-from requests.auth import HTTPBasicAuth
 
 
 class ItemTest(BaseTest):
