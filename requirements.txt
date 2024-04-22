@@ -1,4 +1,3 @@
-argument
 Flask
 Flask-RESTful
 Flask-JWT

@@ -3,6 +3,7 @@ from models.item import ItemModel
 from models.store import StoreModel
 from tests.test_base import BaseTest
 import json
+from requests.auth import HTTPBasicAuth
 
 
 class ItemTest(BaseTest):
@@ -25,6 +26,7 @@ class ItemTest(BaseTest):
     def test_item_not_found(self):
         with self.app() as c:
             r = c.get('/item/test', headers={'Authorization': self.auth_header})
+            print(r.data)
             self.assertEqual(r.status_code, 404)
 
     def test_item_found(self):
@@ -50,14 +52,20 @@ class ItemTest(BaseTest):
                                      d2=json.loads(r.data))
 
     def test_create_item(self):
-        with self.app() as c:
+        headers = {
+            'Content-type':'application/json',
+            'Accept':'application/json'
+        }
+        auth = HTTPBasicAuth('user', '111')
+        with (self.app() as c):
             with self.app_context():
-                StoreModel('test').save_to_db()
-                r = c.post('/item/test', data={'price': 17.99, 'store_id': 1})
-
+                store = StoreModel('test')
+                store.save_to_db()
+                r = c.post('/item/test', data={'name': 'test', 'price': 17.99, 'store_id': 1}, headers=headers, auth=auth)
+                print(r.json)
                 self.assertEqual(r.status_code, 201)
                 self.assertEqual(ItemModel.find_by_name('test').price, 17.99)
-                self.assertDictEqual(d1={'name': 'test', 'price': 17.99},
+                self.assertDictEqual(d1={'id': 1, 'name': 'test', 'price': 17.99, 'store_id': 1},
                                      d2=json.loads(r.data))
 
     def test_create_duplicate_item(self):
@@ -66,7 +74,6 @@ class ItemTest(BaseTest):
                 StoreModel('test').save_to_db()
                 c.post('/item/test', data={'price': 17.99, 'store_id': 1})
                 r = c.post('/item/test', data={'price': 17.99, 'store_id': 1})
-
                 self.assertEqual(r.status_code, 400)
 
     def test_put_item(self):
@@ -74,7 +81,6 @@ class ItemTest(BaseTest):
             with self.app_context():
                 StoreModel('test').save_to_db()
                 r = c.put('/item/test', data={'price': 17.99, 'store_id': 1})
-
                 self.assertEqual(r.status_code, 200)
                 self.assertEqual(ItemModel.find_by_name('test').price, 17.99)
                 self.assertDictEqual(d1={'name': 'test', 'price': 17.99},
@@ -84,9 +90,8 @@ class ItemTest(BaseTest):
         with self.app() as c:
             with self.app_context():
                 StoreModel('test').save_to_db()
-                c.put('/item/test', data={'price': 17.99, 'store_id': 1})
+                c.put('/item/test', json={'id': 1, 'name': 'test', 'price': 17.99, 'store_id': 1})
                 r = c.put('/item/test', data={'price': 18.99, 'store_id': 1})
-
                 self.assertEqual(r.status_code, 200)
                 self.assertEqual(ItemModel.find_by_name('test').price, 18.99)
 
@@ -97,5 +102,5 @@ class ItemTest(BaseTest):
                 ItemModel('test', 17.99, 1).save_to_db()
                 r = c.get('/items')
 
-                self.assertDictEqual(d1={'items': [{'name': 'test', 'price': 17.99}]},
+                self.assertDictEqual(d1={'items': [{'id': 1, 'name': 'test', 'price': 17.99, 'store_id': 1}]},
                                      d2=json.loads(r.data))
