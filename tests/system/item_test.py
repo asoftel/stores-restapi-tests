@@ -1,7 +1,7 @@
 from models.user import UserModel
 from models.item import ItemModel
 from models.store import StoreModel
-from tests.base_test import BaseTest
+from tests.test_base import BaseTest
 import json
 
 

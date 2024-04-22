@@ -1,5 +1,5 @@
 from models.store import StoreModel
-from tests.base_test import BaseTest
+from tests.test_base import BaseTest
 
 
 class StoreTest(BaseTest):
@@ -14,11 +14,12 @@ class StoreTest(BaseTest):
     def test_store_json(self):
         store = StoreModel('test')
         expected = {
+            'id': None,
             'name': 'test',
             'items': []
         }
 
-        self.assertEqual(
-            store.json(),
-            expected,
-            "The JSON export of the store is incorrect. Received {}, expected {}.".format(store.json(), expected))
+        self.assertEqual(store.json(),
+                         expected,
+                         "The JSON export of the store is incorrect. Received {}, expected {}.".format(store.json(),
+                                                                                                       expected))
